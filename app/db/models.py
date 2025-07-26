@@ -2,6 +2,23 @@ from sqlalchemy import Table, Column, Integer, String, Float, DateTime, ForeignK
 from sqlalchemy.orm import relationship
 from app.db.database import Base
 
+
+market_payment_association = Table(
+    "market_payment",
+    Base.metadata,
+    Column("market_id", Integer, ForeignKey("markets.id"), primary_key=True),
+    Column("payment_id", Integer, ForeignKey("payment_methods.id"), primary_key=True)
+)
+
+
+market_product_association = Table(
+    "market_products",
+    Base.metadata,
+    Column("market_id", Integer, ForeignKey("markets.id"), primary_key=True),
+    Column("product_id", Integer, ForeignKey("products.id"), primary_key=True)
+)
+
+
 class States(Base):
     __tablename__ = "states"
     
@@ -49,20 +66,24 @@ class Markets(Base):
     
     cities = relationship("Cities", back_populates="markets")
     market_season = relationship("MarketSeason", back_populates="markets")
+    payment_methods = relationship("PaymentMethod", secondary=market_payment_association, backref="markets")
+    products = relationship("Products", secondary=market_product_association, backref="markets")
     
     
 class MarketSeason(Base):
     __tablename__ = "market_season"
     
     id = Column(Integer, primary_key=True)
-    market_id = Column(Integer, ForeignKey("market.id"))
+    market_id = Column(Integer, ForeignKey("markets.id"))
     season_number = Column(Integer, nullable=False)
+    date_range = Column(Text)
+    time_schedule = Column(Text)
     
     markets = relationship("Markets", back_populates="market_season")
     
     
 class PaymentMethod(Base):
-    __trablename__ = "payment_method"
+    __tablename__ = "payment_methods"
     
     id = Column(Integer, primary_key=True)
     name = Column(String(100), unique=True)
@@ -74,17 +95,3 @@ class Products(Base):
     name = Column(String(100), unique=True)
     
     
-market_payment_association = Table(
-    "market_payment",
-    Base.metadata,
-    Column("market_id", Integer, ForeignKey("markets.id"), primary_key=True),
-    Column("payment_id", Integer, ForeignKey("payment_method.id"), primary_key=True)
-)
-
-
-market_product_association = Table(
-    "market_products",
-    Base.metadata,
-    Column("market_id", Integer, ForeignKey("markets.id"), primary_key=True),
-    Column("product_id", Integer, ForeignKey("products.id"), primary_key=True)
-)
