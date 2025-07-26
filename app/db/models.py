@@ -1,5 +1,5 @@
 from sqlalchemy import Table, Column, Integer, String, Float, DateTime, ForeignKey, Text, Boolean
-from sqlalchemy.orm import relationship, object_session
+from sqlalchemy.orm import relationship
 from app.db.database import Base
 
 class States(Base):
