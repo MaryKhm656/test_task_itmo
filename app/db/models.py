@@ -1,6 +1,7 @@
 from sqlalchemy import Table, Column, Integer, String, Float, DateTime, ForeignKey, Text, Boolean
 from sqlalchemy.orm import relationship
 from app.db.database import Base
+from datetime import datetime
 
 
 market_payment_association = Table(
@@ -64,6 +65,7 @@ class Markets(Base):
     location = Column(Boolean)
     updated_at = Column(DateTime)
     
+    reviews = relationship("Review", back_populates="markets")
     cities = relationship("Cities", back_populates="markets")
     market_season = relationship("MarketSeason", back_populates="markets")
     payment_methods = relationship("PaymentMethod", secondary=market_payment_association, backref="markets")
@@ -93,5 +95,17 @@ class Products(Base):
     
     id = Column(Integer, primary_key=True)
     name = Column(String(100), unique=True)
-    
-    
+
+
+class Review(Base):
+    __tablename__ = "reviews"
+
+    id = Column(Integer, primary_key=True)
+    market_id = Column(Integer, ForeignKey("markets.id"))
+    user_first_name = Column(String(100))
+    user_last_name = Column(String(100))
+    rating = Column(Integer)
+    review_text = Column(Text)
+    created_at = Column(DateTime, default=datetime.now())
+
+    market = relationship("Markets", backref="reviews")

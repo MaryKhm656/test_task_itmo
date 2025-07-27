@@ -1,6 +1,5 @@
 from datetime import datetime
 from app.db.models import States, Counties, Cities, Markets, MarketSeason, PaymentMethod, Products, market_product_association, market_payment_association
-from app.db.database import SessionLocal
 from app.logic.working_with_csv.load_csv import read_csv
 from sqlalchemy.orm import Session
 from app.logic.working_with_csv.constants import PAYMENT_METHODS_MAPPING, PRODUCTS_MAPPING
