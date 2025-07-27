@@ -27,6 +27,9 @@ class States(Base):
     name = Column(String(100), nullable=False)
     
     counties = relationship("Counties", back_populates="state")
+    
+    def __str__(self):
+        return f"State:\nid={self.id}\nname={self.name}"
 
 
 class Counties(Base):
@@ -39,6 +42,9 @@ class Counties(Base):
     state = relationship("States", back_populates="counties")
     cities = relationship("Cities", back_populates="counties")
     
+    def __str__(self):
+        return f"County:\nid={self.id}\nname={self.name}\nstate id={self.state_id}"
+    
 
 class Cities(Base):
     __tablename__ = "cities"
@@ -49,6 +55,9 @@ class Cities(Base):
     
     counties = relationship("Counties", back_populates="cities")
     markets = relationship("Markets", back_populates="cities")
+    
+    def __str__(self):
+        return f"City:\nid{self.id}\nname={self.name}\ncounty id={self.county_id}"
     
 class Markets(Base):
     __tablename__ = "markets"
@@ -71,6 +80,12 @@ class Markets(Base):
     payment_methods = relationship("PaymentMethod", secondary=market_payment_association, backref="markets")
     products = relationship("Products", secondary=market_product_association, backref="markets")
     
+    def __str__(self):
+        return (f"Market:"
+                f"\nid={self.id}"
+                f"\nname={self.name}"
+                f"\ncity id={self.city_id}")
+    
     
 class MarketSeason(Base):
     __tablename__ = "market_season"
@@ -83,6 +98,12 @@ class MarketSeason(Base):
     
     markets = relationship("Markets", back_populates="market_season")
     
+    def __str__(self):
+        return (f"Season:"
+                f"\nid={self.id}"
+                f"\nmarket_id={self.market_id}"
+                f"\nseason number={self.season_number}")
+    
     
 class PaymentMethod(Base):
     __tablename__ = "payment_methods"
@@ -90,11 +111,21 @@ class PaymentMethod(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100), unique=True)
     
+    def __str__(self):
+        return (f"PayMethod:"
+                f"\nid={self.id}"
+                f"\nname={self.name}")
+    
 class Products(Base):
     __tablename__ = "products"
     
     id = Column(Integer, primary_key=True)
     name = Column(String(100), unique=True)
+    
+    def __str__(self):
+        return (f"Product:"
+                f"\nid={self.id}"
+                f"\nname={self.name}")
 
 
 class Review(Base):
@@ -109,3 +140,11 @@ class Review(Base):
     created_at = Column(DateTime, default=datetime.now())
 
     market = relationship("Markets", backref="reviews")
+    
+    def __str__(self):
+        return (f"Review:"
+                f"\nid={self.id}"
+                f"\nmarket_id={self.market_id}"
+                f"\nuser={self.user_last_name} {self.user_first_name}"
+                f"\nrating={self.rating}"
+                f"\nreview={self.review_text}")
