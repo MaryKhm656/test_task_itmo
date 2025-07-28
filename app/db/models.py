@@ -19,6 +19,13 @@ market_product_association = Table(
     Column("product_id", Integer, ForeignKey("products.id"), primary_key=True)
 )
 
+user_review_association = Table(
+    "user_review",
+    Base.metadata,
+    Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
+    Column("review_id", Integer, ForeignKey("reviews.id"), primary_key=True)
+)
+
 
 class States(Base):
     __tablename__ = "states"
@@ -133,13 +140,13 @@ class Review(Base):
 
     id = Column(Integer, primary_key=True)
     market_id = Column(Integer, ForeignKey("markets.id"))
-    user_first_name = Column(String(100))
-    user_last_name = Column(String(100))
+    user_id = Column(Integer, ForeignKey("users.id"))
     rating = Column(Integer)
     review_text = Column(Text)
     created_at = Column(DateTime, default=datetime.now())
 
-    market = relationship("Markets", backref="reviews")
+
+    market = relationship("Markets", back_populates="reviews")
     
     def __str__(self):
         return (f"Review:"
@@ -148,3 +155,19 @@ class Review(Base):
                 f"\nuser={self.user_last_name} {self.user_first_name}"
                 f"\nrating={self.rating}"
                 f"\nreview={self.review_text}")
+    
+    
+class User(Base):
+    __tablename__ = "users"
+    
+    id = Column(Integer, primary_key=True)
+    first_name = Column(String(100))
+    last_name = Column(String(100))
+    created_at = Column(DateTime, default=datetime.now())
+    
+    review = relationship("Reviews", back_populates="users")
+    
+    def __str__(self):
+        return (f"User:"
+                f"\nid={self.id}"
+                f"\nName={self.first_name} {self.last_name}")
