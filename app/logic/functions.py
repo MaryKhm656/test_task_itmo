@@ -16,3 +16,13 @@ def create_user(db: SessionLocal, username: str, first_name: str, last_name: str
             return new_user
         except Exception as e:
             raise e
+        
+        
+def get_user(db: SessionLocal, username: str):
+    try:
+        user = db.query(User).filter(User.username==username).first()
+        if not user:
+            raise ValueError("Пользователь с таким username не найден")
+        return user
+    except Exception as e:
+        raise e
