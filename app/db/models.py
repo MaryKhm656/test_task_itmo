@@ -161,8 +161,9 @@ class User(Base):
     __tablename__ = "users"
     
     id = Column(Integer, primary_key=True)
-    first_name = Column(String(100))
-    last_name = Column(String(100))
+    username = Column(String(100), unique=True)
+    first_name = Column(String(100), nullable=False)
+    last_name = Column(String(100), default=None)
     created_at = Column(DateTime, default=datetime.now())
     
     review = relationship("Reviews", back_populates="users")
