@@ -54,7 +54,7 @@ class Cities(Base):
     name = Column(String(100), nullable=False)
     county_id = Column(Integer, ForeignKey("counties.id"))
 
-    counties = relationship("Counties", back_populates="cities")
+    county = relationship("Counties", back_populates="cities")
     markets = relationship("Markets", back_populates="cities")
 
     def __str__(self):
@@ -76,7 +76,7 @@ class Markets(Base):
     updated_at = Column(DateTime)
 
     reviews = relationship("Review", back_populates="markets")
-    city = relationship("Cities", back_populates="markets")
+    cities = relationship("Cities", back_populates="markets")
     market_seasons = relationship("MarketSeason", back_populates="markets")
     payment_methods = relationship("PaymentMethod", secondary=market_payment_association, back_populates="markets")
     products = relationship("Products", secondary=market_product_association, back_populates="markets")
@@ -144,7 +144,7 @@ class Review(Base):
     created_at = Column(DateTime, default=datetime.now)
 
     user = relationship("User", back_populates="reviews")
-    market = relationship("Markets", back_populates="reviews")
+    markets = relationship("Markets", back_populates="reviews")
 
     def __str__(self):
         return (f"Review:"

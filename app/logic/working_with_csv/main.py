@@ -5,6 +5,7 @@ def main():
     db = SessionLocal()
     try:
         load_data_into_db(db, "Export.csv")
+        print("Загрузка данных успешно завершена!")
     except Exception as e:
         raise e
     finally:

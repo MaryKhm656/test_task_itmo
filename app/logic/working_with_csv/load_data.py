@@ -30,15 +30,15 @@ def insert_counties(db: Session, data: list[dict]):
             db.add(Counties(name=county_name, state_id=state.id))
             
     db.commit()
-        
-        
+
+
 def insert_cities(db: Session, data: list[dict]):
     locations = {
         (row['State'], row['County'], row['city'])
         for row in data
         if row.get('city') and row.get('County')
     }
-    
+
     for state_name, county_name, city_name in locations:
         county = (
             db.query(Counties)
@@ -46,19 +46,19 @@ def insert_cities(db: Session, data: list[dict]):
             .filter(States.name == state_name, Counties.name == county_name)
             .first()
         )
-        
+
         if not county:
             continue
-            
+
         exist_city = (
             db.query(Cities)
             .filter(Cities.name == city_name, Cities.county_id == county.id)
             .first()
         )
-        
+
         if not exist_city:
             db.add(Cities(name=city_name, county_id=county.id))
-            
+
     db.commit()
     
     
@@ -107,7 +107,7 @@ def insert_markets(db: Session, data: list[dict]):
             zip=row.get("zip"),
             latitude=float(row["y"]) if row.get("y") else None,
             longitude=float(row["x"]) if row.get("x") else None,
-            location=row.get("Location") == "Y",
+            has_location=row.get("Location") == "Y",
             updated_at=datetime.strptime(row["updateTime"], "%m/%d/%Y %I:%M:%S %p") if row.get("updateTime") else None,
         )
         db.add(market)

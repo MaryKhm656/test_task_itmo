@@ -26,3 +26,5 @@ def get_user(db: SessionLocal, username: str):
         return user
     except Exception as e:
         raise e
+
+
