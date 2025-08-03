@@ -70,7 +70,8 @@ def search_markets_by_location(db: SessionLocal, city: str = None, state: str = 
 
 
 def get_reviews_by_market(db: SessionLocal, market_id: int):
-    return db.query(Review).filter_by(market_id=market_id).all()
+    reviews = db.query(Review).filter_by(market_id=market_id).all()
+    return [review.rating for review in reviews]
 
 
 def update_market_rating(db: SessionLocal, market_id: int):
@@ -79,8 +80,10 @@ def update_market_rating(db: SessionLocal, market_id: int):
     if not market:
         print("Магазин с таким ID Не найден")
     if not reviews:
+        market.rating = 0
         return
-    avg_rating = mean(reviews)
+
+    avg_rating = mean(map(int, reviews))
     market.rating = round(avg_rating, 1)
     db.commit()
 
@@ -99,7 +102,7 @@ def add_review(db: SessionLocal, market_id: int, username: str, rating: int, tex
             review_text=text
         )
         db.add(review)
-        # db.commit()
+        db.commit()
         update_market_rating(db, market_id)
         return review
     except Exception as e:
@@ -110,9 +113,12 @@ def add_review(db: SessionLocal, market_id: int, username: str, rating: int, tex
 def delete_review(db: SessionLocal, review_id: int):
     try:
         review = db.query(Review).get(review_id)
+        market = db.query(Markets).filter_by(id=review.market_id).first()
+        market_id = market.id
         if not review:
             raise ValueError("Отзыв с таким ID Не найден!")
         db.delete(review)
+        update_market_rating(db, market_id)
         db.commit()
         print("Отзыв успешно удален!")
     except Exception as e:

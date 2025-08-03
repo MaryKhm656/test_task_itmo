@@ -72,7 +72,7 @@ def main():
                     with SessionLocal() as db:
                         market = get_market_by_id(db, market_id)
                         print(f"\n🏪 {market.name}")
-                        print(f"Адрес: {market.street}, ZIP: {market.zip}")
+                        print(f"Адрес: {market.street}, ZIP: {market.zip}, RATING: {market.rating}")
                         if market.reviews:
                             print("Отзывы:")
                             for r in market.reviews:
