@@ -1,6 +1,6 @@
 from app.db.database import SessionLocal
-from app.logic.functions import create_user, get_user, delete_user, get_all_markets, get_market_by_id, \
-    search_markets_by_location, add_review, delete_review, get_reviews_by_market, search_markets_by_distance
+from app.logic.functions import create_user, delete_user, get_all_markets, get_market_by_id, \
+    search_markets_by_location, add_review, delete_review, search_markets_by_distance
 from app.logic.work_with_zip import read_zip_all, get_coordinates_by_zip
 
 
@@ -11,10 +11,10 @@ def main():
         print("2. Посмотреть список рынков")
         print("3. Поиск рынков по городу / штату / ZIP")
         print("4. Поиск рынков по удаленности")
-        print("4. Посмотреть подробности о рынке")
-        print("5. Оставить отзыв")
-        print("6. Удалить отзыв")
-        print("7. Удалить пользователя")
+        print("5. Посмотреть подробности о рынке")
+        print("6. Оставить отзыв")
+        print("7. Удалить отзыв")
+        print("8. Удалить пользователя")
         print("0. Выход")
 
         choice = input("Выберите пункт меню: ")
@@ -89,7 +89,6 @@ def main():
                         zip_code = input("Введите ваш ZIP-код(индекс): ").strip()
                         radius = float(input("Введите предельное расстояние в милях: ").strip())
                         lat1, lon1 = get_coordinates_by_zip(zip_code, all_zip)
-                        print(f"Получили lat1: {lat1} и lon1{lon1}")
 
                         markets_with_distance = search_markets_by_distance(db, radius, lat1, lon1)
 
@@ -98,7 +97,7 @@ def main():
                         else:
                             print(f"Рынки в пределах {radius} миль:")
                             for i, (market, dist) in enumerate(markets_with_distance, 1):
-                                print(f"{i}: {market.name} (ZIP: {market.zip}) -- ~{round(dist, 2)} миль")
+                                print(f"{i}: ID: {market.id} Name: {market.name} (ZIP: {market.zip}) -- ~{round(dist, 2)} миль")
                                 print(f"Рейтинг: {market.rating if market.rating else 'нет'}")
                 except Exception as e:
                     print(f"❌ Ошибка: {e}")
@@ -110,7 +109,7 @@ def main():
                     with SessionLocal() as db:
                         market = get_market_by_id(db, market_id)
                         print(f"\n {market.name}")
-                        print(f"Адрес: {market.street}, ZIP: {market.zip}, RATING: {market.rating if market.rating > 0 else 'У магазина пока нет отзывов'}")
+                        print(f"Адрес: {market.street}, ZIP: {market.zip}, RATING: {market.rating if market.rating and market.rating > 0 else 'У магазина пока нет отзывов'}")
                         if market.reviews:
                             print("Отзывы:")
                             for r in market.reviews:
@@ -120,7 +119,7 @@ def main():
                 except Exception as e:
                     print(f"❌ Ошибка: {e}")
 
-            case "5":
+            case "6":
                 try:
                     with SessionLocal() as db:
                         market_id = int(input("ID рынка: "))
@@ -132,7 +131,7 @@ def main():
                 except Exception as e:
                     print(f"❌ Ошибка: {e}")
 
-            case "6":
+            case "7":
                 try:
                     with SessionLocal() as db:
                         review_id = int(input("Введите ID отзыва для удаления: "))
@@ -140,7 +139,7 @@ def main():
                 except Exception as e:
                     print(f"❌ Ошибка: {e}")
 
-            case "7":
+            case "8":
                 try:
                     with SessionLocal() as db:
                         user_id = int(input("Введите ID пользователя для удаления: "))

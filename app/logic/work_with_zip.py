@@ -39,7 +39,6 @@ def get_coordinates_by_zip(zip_code: str, all_zip: list):
     return None, None
 
 def haversine_distance(lat1, lon1, lat2, lon2):
-    print("Вызов функции haversine")
     R = 3958.8
     phi1 = radians(lat1)
     phi2 = radians(lat2)
@@ -48,5 +47,4 @@ def haversine_distance(lat1, lon1, lat2, lon2):
 
     a = sin(dphi/2) ** 2 + cos(phi1) * cos(phi2) * sin(dlambda*2) ** 2
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
-    print("Конец функции haversine")
     return R * c

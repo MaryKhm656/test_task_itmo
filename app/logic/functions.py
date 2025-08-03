@@ -5,7 +5,7 @@ from sqlalchemy.orm import joinedload
 
 from app.db.models import User, Markets, Cities, Counties, States, Review
 from app.db.database import SessionLocal
-from app.logic.work_with_zip import get_coordinates_by_zip, haversine_distance
+from app.logic.work_with_zip import haversine_distance
 
 
 def create_user(db: SessionLocal, username: str, first_name: str, last_name: str = None):
@@ -46,17 +46,14 @@ def get_all_markets(db: SessionLocal, page: int = 1, per_page: int = 5):
 
 
 def search_markets_by_distance(db: SessionLocal, radius: float, lat1: float, lon1: float):
-    print("Начало функции search_markets")
     markets = db.query(Markets).all()
-    print("Получили рынки")
+
     result = []
     for m in markets:
-        print("Проходимся по рынкам")
         if m.latitude is None or m.longitude is None:
             continue
 
         distance = haversine_distance(lat1, lon1, m.latitude, m.longitude)
-        print(f"Дистанция: {distance}")
         if distance <= radius:
             result.append((m, distance))
 
