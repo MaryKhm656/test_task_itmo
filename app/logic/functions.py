@@ -99,3 +99,15 @@ def delete_review(db: SessionLocal, review_id: int):
         print("Отзыв успешно удален!")
     except Exception as e:
         raise e
+
+
+def delete_user(db: SessionLocal, user_id: int):
+    try:
+        user = db.query(User).get(user_id)
+        if not user:
+            raise ValueError("Пользователь с таким ID не найден!")
+        db.delete(user)
+        db.commit()
+        print("Пользователь успешно удален!")
+    except Exception as e:
+        raise e

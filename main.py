@@ -1,5 +1,5 @@
 from app.db.database import SessionLocal
-from app.logic.functions import create_user, get_user, get_all_markets, get_market_by_id, search_markets_by_location, add_review, delete_review
+from app.logic.functions import create_user, get_user, delete_user, get_all_markets, get_market_by_id, search_markets_by_location, add_review, delete_review
 
 def main():
     while True:
@@ -10,6 +10,7 @@ def main():
         print("4. Посмотреть подробности о рынке")
         print("5. Оставить отзыв")
         print("6. Удалить отзыв")
+        print("7. Удалить пользователя")
         print("0. Выход")
 
         choice = input("Выберите пункт меню: ")
@@ -98,6 +99,14 @@ def main():
                         delete_review(db, review_id)
                 except Exception as e:
                     print(f"❌ Ошибка: {e}")
+
+            case "7":
+                try:
+                    with SessionLocal() as db:
+                        user_id = int(input("Введите ID пользователя для удаления: "))
+                        delete_user(db, user_id)
+                except Exception as e:
+                    print(f"Ошибка: {e}")
 
             case "0":
                 print("👋 До свидания!")
