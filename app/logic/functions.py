@@ -1,4 +1,5 @@
 import math
+from statistics import mean
 
 from sqlalchemy.orm import joinedload
 
@@ -68,6 +69,22 @@ def search_markets_by_location(db: SessionLocal, city: str = None, state: str = 
         raise e
 
 
+def get_reviews_by_market(db: SessionLocal, market_id: int):
+    return db.query(Review).filter_by(market_id=market_id).all()
+
+
+def update_market_rating(db: SessionLocal, market_id: int):
+    reviews = get_reviews_by_market(db, market_id)
+    market = db.query(Markets).filter_by(id=market_id).first()
+    if not market:
+        print("Магазин с таким ID Не найден")
+    if not reviews:
+        return
+    avg_rating = mean(reviews)
+    market.rating = round(avg_rating, 1)
+    db.commit()
+
+
 def add_review(db: SessionLocal, market_id: int, username: str, rating: int, text: str = ""):
 
     try:
@@ -82,7 +99,8 @@ def add_review(db: SessionLocal, market_id: int, username: str, rating: int, tex
             review_text=text
         )
         db.add(review)
-        db.commit()
+        # db.commit()
+        update_market_rating(db, market_id)
         return review
     except Exception as e:
         db.rollback()

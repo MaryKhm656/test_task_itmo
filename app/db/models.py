@@ -66,6 +66,7 @@ class Markets(Base):
     id = Column(Integer, primary_key=True)
     fmid = Column(Integer, unique=True)
     name = Column(String(100), nullable=False)
+    rating = Column(Integer)
     website = Column(Text)
     street = Column(Text)
     city_id = Column(Integer, ForeignKey("cities.id"))

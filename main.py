@@ -36,7 +36,9 @@ def main():
                             markets, total_pages = get_all_markets(db, page, per_page)
                             print(f"\n📄 Страница {page}/{total_pages}")
                             for market in markets:
-                                print(f"{market.id}. {market.name} (ZIP: {market.zip})")
+                                print(f"{market.id}. {market.name} (ZIP: {market.zip})"
+                                      f"\nОтзывы:")
+
                     except Exception as e:
                         print(f"Ошибка: {e}")
                         break
