@@ -1,6 +1,6 @@
 import math
 
-from sqlalchemy.orm import joinedload, sessionmaker
+from sqlalchemy.orm import joinedload
 
 from app.db.models import User, Markets, Cities, Counties, States, Review
 from app.db.database import SessionLocal
@@ -16,7 +16,6 @@ def create_user(db: SessionLocal, username: str, first_name: str, last_name: str
             new_user = User(username=username, first_name=first_name, last_name=last_name)
             db.add(new_user)
             db.commit()
-            db.refresh()
             return new_user
         except Exception as e:
             raise e
@@ -35,7 +34,7 @@ def get_user(db: SessionLocal, username: str):
 def get_all_markets(db: SessionLocal, page: int = 1, per_page: int = 5):
 
     try:
-        query = db.query(Markets).optioms(joinedload(Markets.reviews)).all()
+        query = db.query(Markets).options(joinedload(Markets.reviews)).all()
         total_pages = math.ceil(len(query) / per_page)
         markets = query[(page - 1) * per_page: page * per_page]
         return markets, total_pages
@@ -55,6 +54,8 @@ def get_market_by_id(db: SessionLocal, market_id: int):
 
 def search_markets_by_location(db: SessionLocal, city: str = None, state: str = None, zip_code: int = None):
     try:
+        if state is None and city is None and zip_code is None:
+            raise ValueError("Введите хотя бы одно значение")
         query = db.query(Markets).join(Cities).join(Counties).join(States)
         if city:
             query = query.filter(Cities.name.ilike(f"%{city}%"))
@@ -67,10 +68,10 @@ def search_markets_by_location(db: SessionLocal, city: str = None, state: str = 
         raise e
 
 
-def add_review(db: SessionLocal, market_id: int, user_name: str, rating: int, text: str = ""):
+def add_review(db: SessionLocal, market_id: int, username: str, rating: int, text: str = ""):
 
     try:
-        user = db.query(User).filter(username=user_name).first()
+        user = db.query(User).filter_by(username=username).first()
         if not user:
             raise ValueError("Пользователь с таким username не найден")
 
@@ -82,7 +83,6 @@ def add_review(db: SessionLocal, market_id: int, user_name: str, rating: int, te
         )
         db.add(review)
         db.commit()
-        db.refresh()
         return review
     except Exception as e:
         db.rollback()
