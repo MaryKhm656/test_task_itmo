@@ -1,5 +1,7 @@
 from app.db.database import SessionLocal
-from app.logic.functions import create_user, get_user, delete_user, get_all_markets, get_market_by_id, search_markets_by_location, add_review, delete_review
+from app.logic.functions import create_user, get_user, delete_user, get_all_markets, get_market_by_id, \
+    search_markets_by_location, add_review, delete_review, get_reviews_by_market
+
 
 def main():
     while True:
@@ -29,21 +31,32 @@ def main():
 
             case "2":
                 page = 1
-                per_page = 5
+                per_page = 10
                 while True:
                     try:
                         with SessionLocal() as db:
                             markets, total_pages = get_all_markets(db, page, per_page)
-                            print(f"\n📄 Страница {page}/{total_pages}")
+                            print(f"\nСтраница {page}/{total_pages}")
                             for market in markets:
-                                print(f"{market.id}. {market.name} (ZIP: {market.zip})"
-                                      f"\nОтзывы:")
+                                print(f"\n{market.id}. {market.name} (ZIP: {market.zip})")
+                                print(f"⭐️ Рейтинг: {market.rating if market.rating else 'нет оценок'}")
+                                print("Отзывы:")
+
+                                if market.reviews:
+                                    for i, review in enumerate(market.reviews, 1):
+                                        if review.review_text:
+                                            print('-' * 30)
+                                            print(f"{review.user.username}: {review.review_text}")
+                                        else:
+                                            print('-Пользователь не оставил отзыв')
+                                else:
+                                    print("Нет рецензий")
 
                     except Exception as e:
                         print(f"Ошибка: {e}")
                         break
 
-                    nav = input("← P | N → | Enter — выход: ").lower()
+                    nav = input("\n← P | N → | Enter — выход: ").lower()
                     if nav == "n" and page < total_pages:
                         page += 1
                     elif nav == "p" and page > 1:

@@ -35,7 +35,7 @@ def get_user(db: SessionLocal, username: str):
 def get_all_markets(db: SessionLocal, page: int = 1, per_page: int = 5):
 
     try:
-        query = db.query(Markets).options(joinedload(Markets.reviews)).all()
+        query = db.query(Markets).options(joinedload(Markets.reviews)).order_by(Markets.id).all()
         total_pages = math.ceil(len(query) / per_page)
         markets = query[(page - 1) * per_page: page * per_page]
         return markets, total_pages
@@ -71,11 +71,11 @@ def search_markets_by_location(db: SessionLocal, city: str = None, state: str = 
 
 def get_reviews_by_market(db: SessionLocal, market_id: int):
     reviews = db.query(Review).filter_by(market_id=market_id).all()
-    return [review.rating for review in reviews]
+    return reviews
 
 
 def update_market_rating(db: SessionLocal, market_id: int):
-    reviews = get_reviews_by_market(db, market_id)
+    reviews = [review.rating for review in get_reviews_by_market(db, market_id)]
     market = db.query(Markets).filter_by(id=market_id).first()
     if not market:
         print("Магазин с таким ID Не найден")
