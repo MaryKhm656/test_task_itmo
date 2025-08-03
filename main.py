@@ -23,7 +23,7 @@ def main():
                         first_name = input("Имя: ")
                         last_name = input("Фамилия (необязательно): ") or None
                         user = create_user(db, username, first_name, last_name)
-                        print(f"✅ Пользователь {user.username} создан.")
+                        print(f" Пользователь {user.username} создан.")
                 except Exception as e:
                     print(f"❌ Ошибка: {e}")
 
@@ -71,8 +71,8 @@ def main():
                     market_id = int(input("Введите ID рынка: "))
                     with SessionLocal() as db:
                         market = get_market_by_id(db, market_id)
-                        print(f"\n🏪 {market.name}")
-                        print(f"Адрес: {market.street}, ZIP: {market.zip}, RATING: {market.rating}")
+                        print(f"\n {market.name}")
+                        print(f"Адрес: {market.street}, ZIP: {market.zip}, RATING: {market.rating if market.rating > 0 else 'У магазина пока нет отзывов'}")
                         if market.reviews:
                             print("Отзывы:")
                             for r in market.reviews:
