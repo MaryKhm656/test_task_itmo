@@ -1,3 +1,4 @@
 SQLAlchemy~=2.0.41
 environs~=14.2.0
 pathlib~=1.0.1
+psycopg2~=2.9.10
